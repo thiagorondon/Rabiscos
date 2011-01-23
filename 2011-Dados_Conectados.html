@@ -1,14 +1,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-  <head>
-  <title>
-2011, PUBLICIDADE DE DADOS GOVERNAMENTAIS.
-</title>
+<head>
+<title>2011, PUBLICIDADE DE DADOS GOVERNAMENTAIS.</title>
 <meta http-equiv="Content-Type" content="text/html" />
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 <link rel="Stylesheet" href="style.css" type="text/css" />
- 
- </head>
+</head>
 <body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">
 
 <address>
@@ -118,6 +115,37 @@ Já os arquivos em formato RDF poderiam ser utilizada por pessoas, e principalme
 O formato CSV é amplamento utilizado por vários softwares e pessoas, e seria utilizado por pessoas que querem manipular de forma rápida e sem a utilização de grande conhecimento para isto.
 </p>
 
+<h4>CSV</h4>
+
+<p>
+Não há uma especificação formal deste padrão, porém o formato de arquivo CSV armazena dados tabelados em um arquivo de texto separados por um delimitador em comum para separar os valores, e pode ser utilizado aspas em campos no qual são usados os caracteres reservados (delimitador comum e quebra de linha).
+</p>
+
+<p>
+A utilização dos arquivos ".csv" é muito simples e suportado por quase todos os editores de texto, planilhas eletrônicas e SGDB disponíveis.
+</p>
+
+<p>Para distribuição dos dados governamentais a sugestão é que seja utilizada na primeira linha, o cabeçalho, o nome das colunas dos dados que estarão dispostos no arquivo, um exemplo:
+</p>
+
+<blockquote>
+EMPRESA,CNPJ,TELEFONE,ENDERECO,CEP<br/>
+Empresa de exemplo, 0000-0000-0000/0000-1, 1234-1234, Rua exemplo, 42420-123<br/>
+Empresa de exemplo 2, 0000-0000-0000/0000-2, 1234-1234, Rua exemplo, 42420-123<br/>
+
+
+</blockquote>
+
+<h4>RDF</h4>
+
+<p>
+A linguagem para representação de informações na Internet, no qual são arquivos baseados em metadata com objetivo de criar um modelo de documento com uma semântica se utilizando de sintaxe XML.
+</p>
+
+<p>
+Encontre mais informações para publicação de arquivos RDF no final deste documento, em referências.
+</p>
+
 <h3>CONECTANDO DADOS</h3>
 
 <p>
@@ -138,7 +166,19 @@ No documento "Design Issues: Linked Data" de Tim Berners-Lee, ele comenta que pa
 <p>
 A serialização destes dados pode ser oferecida em RDFa, RDF/XML, N3, Turtle, … .
 </p>
-				      
+
+<h2>REPOSITÓRIO</H2>
+
+<p>
+A sugestão é que o repositório principal esteja hospedado dentro do governo, oferecendo um mapa com os recursos disponíveis dos dados que lá estejam para que as pessoas possam explorar.
+</p>
+
+<p>Este repositório pode se utilizar de recursos externos (FOAF) de todos os dados do governo nas esferas federais, estaduais e municipais.</p>
+
+<p>
+Desta forma fica mais fácil para todos, encontrarem os dados e também posteriormente identificar os locais que estejam com problemas. Dois exemplos ótimo é o repositório americano (vide <A href="http://data.gov">http://data.gov</a>) e inglês (vide <a href="http://data.gov.uk">http://data.gov.uk</a>).</p>
+</p>
+
 <h2>CONCLUSÃO</h2>
 
 <p>
