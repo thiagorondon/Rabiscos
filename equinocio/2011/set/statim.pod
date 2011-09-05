@@ -1,0 +1,142 @@
+
+=head1 NAME
+
+Statim, uma ideia para um servidor de estatisticas.
+
+=cut
+
+=head1 INTRODUÇÃO
+
+Estou "abusando" do equinócio para demonstrar um "esboço" de um projeto que iniciei há
+duas semanas para solucionar um problema que tinha em relação a estatistica no trabalho,
+e para isto criei este projeto que ainda esta apenas em um repositório de desenvolvimento
+e por isto pode ser que ele nem vá para o CPAN, ou mesmo sofra alterações futuras.
+
+Meu objetivo com este texto é colocar minhas ideias, e coletar opiniões e futuros 
+colaboradores para o projeto.
+
+=head1 ABSTRAÇÃO
+
+É um simples serviço que irá armazenar informações de estatisticas baseado em um
+"ring buffer", ou seja, eu irei determinar antes de começar a coletar os dados uma 
+estrutura já estabelecida para poder agrupar elas em conjunto.
+
+<center>
+<imagem: http://upload.wikimedia.org/wikipedia/commons/b/b7/Circular_buffer.svg>
+</center>
+
+A ideia principal é poder oferecer um design e promover a portabilidade e reduzir o
+esforço para criar aplicações web para gerenciar estatisticas de seus dados, sem
+fazer com que eles acessem diretamente tua base a todo momento.
+
+Ou seja, a ideia é ter um intermediador entre o banco de dados e a aplicação para
+que a geração de estatisticas seja mais trivial e gere menos impacto.
+
+Para isto, foi definir o conceito de "coleção de dados" utilizado pelo Statim.
+
+=head2 Coleção de dados
+
+É o nome do grupo de dados, ou da coleção, onde você irá identificar as informações
+que você deseja, e eles sempre deverão ter um período definido e ao menos um campo
+do tipo contador.
+
+=over 4
+
+=item Periodo
+
+É a quantidade de tempo que os dados serão organizados, e é representado por segundos.
+
+=item Campos
+
+São os campos que fazem parte da coleção, e eles podem ser contadores (count) ou uma
+lista de strings (enum).
+
+=back
+
+=head3 Configuração
+
+Abaixo, um exemplo de configuração do servidor, com a definição de uma coleção de dados, 
+no qual vamos usar como exemplo no restante deste artigo.
+
+	{
+        	"collection" : {
+			"period" : "84600",
+			"fields" : {
+				"foo" : "count",
+				"bar" : "enum",
+				"jaz" : "enum"
+			},
+		}
+	}
+
+
+=head1 SINTAXE
+
+A sintaxe definida para enviar os comandos, é definida:
+
+	[comando] [coleção de dados] [parametro:valor] [parametro:valor] [...]
+
+=head1 COMANDOS
+
+Há três tipos de comandos em linha disponível dentro do Statim, que podem ser dividos em:
+
+=head2 Enviar/Armazenar dados.
+
+Para enviar um dado para o servidor, há disponível por enquanto um método no qual
+você informa o nome do "collection", e os parametros.
+
+	add collection ts:1234567890 foo:1 bar:jaz
+	OK
+
+O parametro "ts" diz qual o "tempo" do dado informado, e ele sempre é referenciado
+pelo nome "ts" (timestamp) e o valor é baseado no "epoch time", se este parametro
+não for passado, ele assume que o o "tempo" é o do momento que o comando é enviado.
+
+=head2 Restaurar dados
+
+Para recuperar um dado, basta informar a coleção e o "tempo" que deseja recuperar
+o dado, por exemplo:
+
+	 get collection bar:jaz ts:123456780-1234567890 foo
+	 OK 1
+
+O único parametro que não vem com valor, é o "foo", por é justamente o valor dele
+que estamos buscando (contador).
+
+O campos ts, pode ser representado por um único "epoch time", ou um intervalo entre
+dois "tempos", para obter o total deles.
+
+=head2 Outros comandos
+
+=head3 version
+	
+Mostrar a versão do servidor.
+
+=head3 quit
+
+Assim que o servidor receber este comando, ele irá fechar a conexão. Porém não é necessário enviar este comando para fechar a conexão, pois ela é fechada pelo servidor assim que o cliente desconecta.
+
+=head2 Storage
+
+A versão inicial há um storage disponível para o Redis, porém basta escrever um módulo para armazenar em qualquer outro local que você queira.
+
+=head2 Desenvolvimento
+
+O desenvolvimento esta ainda em fase de construção de ideias, e por isto se você se interessou, peço para que você baixe ele, teste e envie suas críticas e sugestões para lista da São Paulo Perl Mongers.
+
+O repositório do projeto é L<http://github.com/maluco/Statim>.
+
+Há um repositório com a especificação L<http://github.com/maluco/Statim-specs>.
+
+=head2 DBIx::Class com o Statim
+
+Enquanto escrevia este artigo, comecei a escrever um módulo para facilitar o uso dele com o DBIx::Class, ou seja, todos os dados inseridos em um schema que esteja carregando o componente do Statim, enviara os dados para o statim, facilitando assim a implementação em alguns cenários.
+
+Veja mais L<https://github.com/maluco/DBIx-Class-Statim>.
+
+=head2 AUTOR
+
+Thiago Rondon, <thiago@aware.com.br>, http://www.aware.com.br/
+
+=cut
+
