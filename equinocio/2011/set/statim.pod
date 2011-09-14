@@ -138,6 +138,20 @@ que estamos buscando (contador).
 O campos ts, pode ser representado por um único "epoch time", ou um intervalo entre
 dois "tempos", para obter o total deles.
 
+    # procurar por "*" em bar.
+    get collection bar:* foo
+    OK 1
+    
+    # não declarar o sub-grupo, é o mesmo que passar o parametro "*"
+    get collection foo
+    OK 1
+    
+    # buscar por "j*z".
+    get collection bar:j*z foo
+    OK 1
+
+Veja que no exemplo acima, é possível utilizar a expressão "*" para busca.
+
 =head2 Outros comandos
 
 =head3 version
