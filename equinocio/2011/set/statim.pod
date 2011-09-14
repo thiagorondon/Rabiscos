@@ -168,7 +168,7 @@ Veja que no exemplo acima, é possível utilizar a expressão "*" para busca.
     get collection ts:123456780-1234567890 foo:max
     OK 1
 
-Veja que no campo "enum", eu posso passar a função para ser executada nas
+Veja que no campo "count", eu posso passar a função para ser executada nas
 séries que irão "casar" com os filtros.
 
 =head2 Outros comandos
