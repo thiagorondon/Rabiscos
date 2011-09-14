@@ -152,6 +152,25 @@ dois "tempos", para obter o total deles.
 
 Veja que no exemplo acima, é possível utilizar a expressão "*" para busca.
 
+    # somar todos os grupos de periodos
+    get collection ts:123456780-1234567890 foo:sum
+    OK 1
+
+    # buscar a média
+    get collection ts:123456780-1234567890 foo:avg
+    OK 1
+
+    # valor mínimo
+    get collection ts:123456780-1234567890 foo:min
+    OK 1
+
+    # valor máximo
+    get collection ts:123456780-1234567890 foo:max
+    OK 1
+
+Veja que no campo "enum", eu posso passar a função para ser executada nas
+séries que irão "casar" com os filtros.
+
 =head2 Outros comandos
 
 =head3 version
