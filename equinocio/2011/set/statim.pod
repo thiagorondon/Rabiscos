@@ -8,6 +8,13 @@ Statim, uma ideia para um servidor de série temporal determinística e estocás
 
 =head1 INTRODUÇÃO
 
+=begin pod:xhtml
+
+<center><img src="/static/images/equinocio/2011/set/statim-example1.png"></center>
+
+=end pod:xhtml
+
+
 Este é um projeto que inicie há 3 semanas, e na realidade eu tenho no trabalho alguns cenários que preciso de um servidor para armazenar informações para obter elas posteriormente baseada em uma série temporal, onde os clientes podem estar descentralizados, ou seja em nós distintos para enviar a informação. Outra motivação, é que em aplicações web há a necessidade de gerar informações baseada em tempo para relatórios de estatisticas, gráficos em séries temporais que pretendo não utilizar o banco de dados para efetuar estas pesquisas a todo momento.
 
 Pensando nisto, comecei a procurar soluções, e a maioria delas existentes eu teria que escrever algo "próprio" para encapsular, e pensando desta forma resolvi começar o projeto para suprir esta minha necessidade pessoal, e no qual em pouco tempo, já estou utiilzando em 3 cenários distintos com sucesso.
@@ -18,15 +25,18 @@ Uma série temporal é uma coleção de informações feitas sequencialmente ao 
 
 A aplicação da organização dos dados desta maneira, pode nos oferecer um modelo de analise para compreender o que foi realizado, por exemplo extrair estatisticas, ou para efetuar previsão baseado na tendencia da analise das informações já inseridas.
 
-Há duas maneiras de classificar uma série temporal, determinística quando os valores da série podem ser escritos através de uma função "y = f(tempo)", onde há apenas o tempo como argumento, ou estocástica, quando a série envolve além do tempo, temos aleatórios, "y = f(tempo, ...)".
+Há duas maneiras de classificar uma série temporal, determinística quando os
+valores da série podem ser escritos através de uma função "y = f(tempo)", onde
+há apenas o tempo como argumento, ou estocástica, quando a série envolve além
+do tempo, termos aleatórios, "y = f(tempo, ...)".
 
-A ideia principal é poder oferecer um design e promover a portabilidade e reduzir o esforço para criar aplicações em geral e web para gerenciar estatisticas de seus dados, sem fazer com que eles acessem diretamente tua base a todo momento. No meu caso em especifico, o primeiro caso era ter um intermediador entre o banco de dados e a aplicação para que a geração de estatisticas seja mais trivial e gere menos impacto.
+A ideia principal é poder oferecer um design, promover a portabilidade e reduzir o esforço para criar aplicações em geral e web para gerenciar estatisticas de seus dados, sem fazer com que eles acessem diretamente tua base a todo momento. No meu caso em especifico, o primeiro caso era ter um intermediador entre o banco de dados e a aplicação para que a geração de estatisticas seja mais trivial e gere menos impacto.
 
 E é justamente nestes casos, onde o estilo do statim se comunicar pode auxiliar e facilitar o uso de um servidor para armazenar este tipo de informação, onde os objetivos do desenvolvimento pretende:
 
 =over 4
 
-=item * Oferecer uma sintaxe simples de adicionar dados
+=item * Oferecer uma sintaxe simples para adicionar, remover, atualizar e buscar os dados
 
 =item * Modular, para criação de interfaces TCP, REST e etc, para facilitar o uso centralizado e descentralizado de envio de dados.
 
@@ -64,7 +74,7 @@ Mas, a questão principal aqui, é que com os campos do tipo "enum", você pode 
 		aggregate => sum,		# como estas informações serão recebidas
 		fields => {
 			login => enum,		# é um campo aleatório do tipo enum.
-			ip => enum,		# o ip do usuário
+			ip => enum,		    # o ip do usuário
 			modulo => enum,		# o módulo que o usuário esta acessando no aplicativo
 			count => count		# o número de vezes
 		}
@@ -72,6 +82,19 @@ Mas, a questão principal aqui, é que com os campos do tipo "enum", você pode 
 
 Com estas informações, eu posso efetuar uma consulta na coleção de dados para saber quantas entradas tivemos em um periodo, ou eu posso selecionar quantas entradas tiveram neste periodo com um usuário especifico, ou com um ip especifico, ou em um módulo do aplicativo espcifico, ou mesmo juntar uma combinação entre eles. Veja que desta maneira, eu ganho uma facilidade de busca de informações muito mais eficiente e simples.
 
+=begin pod:xhtml
+
+<center><img src="/static/images/equinocio/2011/set/statim-historico-med.png"></center>
+
+=end pod:xhtml
+
+Uma representação simples em gráfico para o que acontece, onde a coleção de
+dados "histórico", terá grupos agregados baseado no tempo (ts) e eles terão
+os campos, que irão representar sub-conjuntos.
+
+Com esta representação, depois você pode buscar os "sub-conjuntos" dentro de
+um "ts" (periodo) e aplicar filtros que você desejar, assim como você pode
+seleciona vários periodos de uma coleção e criar uma nova série temporal.
 
 =back
 
@@ -81,9 +104,9 @@ Para que o Statim fosse razoavelmente simples de ser utilizado, foi criado um pr
 
 =head1 SINTAXE
 
-Como já foi dito em protocolo, mas em outras palavras, a sintaxe definida para enviar os comandos, é definida:
+A sintaxe definida para enviar os comandos, é definida:
 
-	[comando] [coleção de dados] [parametro:valor] [parametro:valor] [...]
+	(comando) [coleção de dados] [parametro:valor] [parametro:valor] [...]
 
 =head1 COMANDOS
 
@@ -127,7 +150,25 @@ Assim que o servidor receber este comando, ele irá fechar a conexão. Porém n�
 
 =head2 Erros
 
-Há três tipos de erros, ERROR (comando não existente), CLIENT_ERROR <error> (erro do cliente), SERVER_ERROR (erro do servidor)
+Há três tipos de erros de resposta, que são:
+
+=over *
+
+=item ERROR 
+
+Comando não existente
+
+=item CLIENT_ERROR <error> 
+
+Erro do cliente da leitura do comando enviado pelo cliente.
+
+=item SERVER_ERROR <error>
+
+Algum erro relativo ao funcionamento do servidor.
+
+=back
+
+Todos os "<error>" é uma mensagem legível para interpretação do que ocorreu.
 
 =head3 Configuração
 
