@@ -159,8 +159,6 @@ O desenvolvimento esta ainda em fase de construção de ideias, e por isto se vo
 
 O repositório do projeto é L<http://github.com/maluco/Statim>.
 
-Há um repositório com a especificação L<http://github.com/maluco/Statim-specs>.
-
 =head2 DBIx::Class com o Statim
 
 Enquanto escrevia este artigo, comecei a escrever um módulo para facilitar o uso dele com o DBIx::Class, ou seja, todos os dados inseridos em um schema que esteja carregando o componente do Statim, enviara os dados para o statim, facilitando assim a implementação em alguns cenários.
