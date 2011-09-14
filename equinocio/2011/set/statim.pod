@@ -129,8 +129,6 @@ Assim que o servidor receber este comando, ele irá fechar a conexão. Porém n�
 
 Há três tipos de erros, ERROR (comando não existente), CLIENT_ERROR <error> (erro do cliente), SERVER_ERROR (erro do servidor)
 
-Para isto, foi definir o conceito de "coleção de dados" utilizado pelo Statim.
-
 =head3 Configuração
 
 Abaixo, um exemplo de configuração do servidor, com a definição de uma coleção de dados, 
