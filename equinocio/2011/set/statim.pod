@@ -153,7 +153,63 @@ esta utilizando o formato JSON.
 
 A versão inicial há um storage disponível para o Redis, porém basta escrever um módulo para armazenar em qualquer outro local que você queira.
 
-=head2 Desenvolvimento
+=head1 APLICATIVOS
+
+Há dois aplicativos para facilitar a inicialização do uso do statim.
+
+=head2 statim-server
+
+É um aplicativo para facilitar a execução do servidor statim, para executar ele é necessário inidicar um servidor redis para utilizar como storage.
+
+	./statim-server -h
+	Usage: ./statim-server [options] ...
+
+	Options:
+	-h,--help     show this help
+        --host        set statim server host
+    	--port        set statim server port
+	-c,--config   set statim config file path
+
+	Examples:
+		                 
+		./statim-server --host 127.0.0.1 --port 12345 -c ~/my-statim/config.json
+
+
+=head2 statim-client
+
+É um aplicativo para enviar dados para o servidor do statim.
+
+	$ ./statim-client -h
+	Usage: ./statim-client [options] ...
+
+	Options:
+	-h,--help     show this help
+	--host        set statim server host
+	--port        set statim server port
+
+	Examples:
+         
+    		./statim-client add collection foo:bar count:1
+
+
+=head1 CLASSE PARA O CLIENTE
+
+Há disponível no pacote uma classe para você utilizar com o servidor do statim, que basicamente é o que o aplicativo statim-client se utiliza, que basicamente é:
+
+	use Statim::Client;
+
+	my $client = Statim::Client->new({
+		host => '127.0.0.1',
+		port => '12345'
+	});
+
+	$client->add('collection' => 'foo:bar', 'count:1');
+	
+	$client->get('collection' => 'foo:bar', 'count');
+
+Acredito pelo o que já abordado aqui, o código é auto explicado. :-)
+
+=head1 DESENVOLVIMENTO
 
 O desenvolvimento esta ainda em fase de construção de ideias, e por isto se você se interessou, peço para que você baixe ele, teste e envie suas críticas e sugestões para lista da São Paulo Perl Mongers.
 
@@ -165,7 +221,7 @@ Enquanto escrevia este artigo, comecei a escrever um módulo para facilitar o us
 
 Veja mais L<https://github.com/maluco/DBIx-Class-Statim>.
 
-=head2 AUTOR
+=head1 AUTOR
 
 Thiago Rondon, <thiago@aware.com.br>, http://www.aware.com.br/
 
