@@ -23,7 +23,7 @@ Pensando nisto, comecei a procurar soluções, e a maioria delas existentes eu t
 
 Uma série temporal é uma coleção de informações feitas sequencialmente ao longo do tempo, e é utilizado em diversas áreas como em finanças, ciências econômicas, seguros, demografia, ciências sociais, meteorologia, epidmiologia, e etc.
 
-A aplicação da organização dos dados desta maneira, pode nos oferecer um modelo de analise para compreender o que foi realizado, por exemplo extrair estatisticas, ou para efetuar previsão baseado na tendencia da analise das informações já inseridas.
+A aplicação trabalha com organização dos dados desta maneira, pode nos oferecer um modelo de analise para compreender o que foi realizado, por exemplo extrair estatisticas, ou para efetuar previsão baseado na tendencia da analise das informações já inseridas.
 
 Há duas maneiras de classificar uma série temporal, determinística quando os
 valores da série podem ser escritos através de uma função "y = f(tempo)", onde
