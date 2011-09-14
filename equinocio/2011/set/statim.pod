@@ -8,17 +8,17 @@ Statim, uma ideia para um servidor de série temporal determinística e estocás
 
 =head1 INTRODUÇÃO
 
-Este é um projeto que inicie há 3 semanas, e na realidade eu tenho no trabalho alguns cenários que preciso de um servidor para armazenar informações para obter elas posteriormente baseada em uma série temporal, onde os clientes podem estar descentralizados, ou seja em nós distintos para enviar a informação.
+Este é um projeto que inicie há 3 semanas, e na realidade eu tenho no trabalho alguns cenários que preciso de um servidor para armazenar informações para obter elas posteriormente baseada em uma série temporal, onde os clientes podem estar descentralizados, ou seja em nós distintos para enviar a informação. Outra motivação, é que em aplicações web há a necessidade de gerar informações baseada em tempo para relatórios de estatisticas, gráficos em séries temporais que pretendo não utilizar o banco de dados para efetuar estas pesquisas a todo momento.
 
-Pensando nisto, comecei a procurar soluções, e a maioria das soluções existentes eu teria que escrever algo "próprio" para encapsular, e pensando desta forma resolvi começar o projeto para suprir esta minha necessidade pessoal, e no qual em pouco tempo, já estou utiilzando em 3 cenários distintos com sucesso.
+Pensando nisto, comecei a procurar soluções, e a maioria delas existentes eu teria que escrever algo "próprio" para encapsular, e pensando desta forma resolvi começar o projeto para suprir esta minha necessidade pessoal, e no qual em pouco tempo, já estou utiilzando em 3 cenários distintos com sucesso.
 
 =head1 ABSTRAÇÃO
 
 Uma série temporal é uma coleção de informações feitas sequencialmente ao longo do tempo, e é utilizado em diversas áreas como em finanças, ciências econômicas, seguros, demografia, ciências sociais, meteorologia, epidmiologia, e etc.
 
-A aplicação da organização dos dados desta maneira, pode nos oferecer um modelo de analise para compreender o que foi realizado, e extrair estatisticas por exemplo, e para efetuar previsão baseado na tendencia da analise das informações já inseridas.
+A aplicação da organização dos dados desta maneira, pode nos oferecer um modelo de analise para compreender o que foi realizado, por exemplo extrair estatisticas, ou para efetuar previsão baseado na tendencia da analise das informações já inseridas.
 
-Há duas maneiras de classificar uma série temporal, determinística quando os valores da série podem ser escritos através de uma função "y = f(tempo)", onde há apenas o tempo como argumento, ou estocástica, quando a série envolve além do tempo, temos aleatórios, "y = f(tempo, e)".
+Há duas maneiras de classificar uma série temporal, determinística quando os valores da série podem ser escritos através de uma função "y = f(tempo)", onde há apenas o tempo como argumento, ou estocástica, quando a série envolve além do tempo, temos aleatórios, "y = f(tempo, ...)".
 
 A ideia principal é poder oferecer um design e promover a portabilidade e reduzir o esforço para criar aplicações em geral e web para gerenciar estatisticas de seus dados, sem fazer com que eles acessem diretamente tua base a todo momento. No meu caso em especifico, o primeiro caso era ter um intermediador entre o banco de dados e a aplicação para que a geração de estatisticas seja mais trivial e gere menos impacto.
 
@@ -32,7 +32,7 @@ E é justamente nestes casos, onde o estilo do statim se comunicar pode auxiliar
 
 =item * Utilizar termos aleatórios para facilitar o cruzamento de informações.
 
-=item * Obter séries, e aplicar funções nas séries temporais para criar novas séries temporais.
+=item * Obter séries, e aplicar funções nas séries temporais para criar novas séries temporais aleatórias.
 
 =back
 
@@ -140,6 +140,7 @@ esta utilizando o formato JSON.
 	{
         	"collection" : {
 			"period" : "84600",
+			"aggregate" : "sum",
 			"fields" : {
 				"foo" : "count",
 				"bar" : "enum",
