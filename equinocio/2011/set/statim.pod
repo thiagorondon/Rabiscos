@@ -152,17 +152,17 @@ Assim que o servidor receber este comando, ele irá fechar a conexão. Porém n�
 
 Há três tipos de erros de resposta, que são:
 
-=over *
+=over 4
 
-=item ERROR 
+=item * ERROR 
 
 Comando não existente
 
-=item CLIENT_ERROR <error> 
+=item * CLIENT_ERROR <error> 
 
 Erro do cliente da leitura do comando enviado pelo cliente.
 
-=item SERVER_ERROR <error>
+=item * SERVER_ERROR <error>
 
 Algum erro relativo ao funcionamento do servidor.
 
