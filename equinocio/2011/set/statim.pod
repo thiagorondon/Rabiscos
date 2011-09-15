@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Statim, uma ideia para um servidor de série temporal determinística e estocástica.
+Statim, uma idéia para um servidor de série temporal determinística e estocástica.
 
 =cut
 
@@ -15,7 +15,7 @@ Statim, uma ideia para um servidor de série temporal determinística e estocás
 =end pod:xhtml
 
 
-Este é um projeto que inicie há 3 semanas, e na realidade eu tenho no trabalho alguns cenários que preciso de um servidor para armazenar informações para obter elas posteriormente baseada em uma série temporal, onde os clientes podem estar descentralizados, ou seja em nós distintos para enviar a informação. Outra motivação, é que em aplicações web há a necessidade de gerar informações baseada em tempo para relatórios de estatisticas, gráficos em séries temporais que pretendo não utilizar o banco de dados para efetuar estas pesquisas a todo momento.
+Este é um projeto que inicie há 3 semanas, e na realidade eu tenho no trabalho alguns cenários que preciso de um servidor para armazenar informações para obter elas posteriormente baseada em uma série temporal, onde os clientes podem estar descentralizados, ou seja em nós distintos para enviar a informação. Outra motivação, é que em aplicações web há a necessidade de gerar informações baseada em tempo para relatórios de estatísticas, gráficos em séries temporais que pretendo não utilizar o banco de dados para efetuar estas pesquisas a todo momento.
 
 Pensando nisto, comecei a procurar soluções, e a maioria delas existentes eu teria que escrever algo "próprio" para encapsular, e pensando desta forma resolvi começar o projeto para suprir esta minha necessidade pessoal, e no qual em pouco tempo, já estou utiilzando em 3 cenários distintos com sucesso.
 
@@ -23,14 +23,20 @@ Pensando nisto, comecei a procurar soluções, e a maioria delas existentes eu t
 
 Uma série temporal é uma coleção de informações feitas sequencialmente ao longo do tempo, e é utilizado em diversas áreas como em finanças, ciências econômicas, seguros, demografia, ciências sociais, meteorologia, epidmiologia, e etc.
 
-A aplicação trabalha com organização dos dados desta maneira, pode nos oferecer um modelo de analise para compreender o que foi realizado, por exemplo extrair estatisticas, ou para efetuar previsão baseado na tendencia da analise das informações já inseridas.
+Talvez sejam dois os pontos principais para armazenar as informações desta
+maneira, o primeiro ponto é oferecer um modelo de analise para compreender o
+que foi realizado, por exemplo extrair estatísticas. Outro ponto seria para
+efetuar previsões baseado na tendência da analise das informações já inseridas.
 
 Há duas maneiras de classificar uma série temporal, determinística quando os
 valores da série podem ser escritos através de uma função "y = f(tempo)", onde
 há apenas o tempo como argumento, ou estocástica, quando a série envolve além
 do tempo, termos aleatórios, "y = f(tempo, ...)".
 
-A ideia principal é poder oferecer um design, promover a portabilidade e reduzir o esforço para criar aplicações em geral e web para gerenciar estatisticas de seus dados, sem fazer com que eles acessem diretamente tua base a todo momento. No meu caso em especifico, o primeiro caso era ter um intermediador entre o banco de dados e a aplicação para que a geração de estatisticas seja mais trivial e gere menos impacto.
+A idéia principal é poder oferecer um design para promover a portabilidade e
+reduzir o esforço na criação de aplicações em geral com o objetivo de gerenciar 
+estatísticas de seus dados. Evitando em alguns casos por exemplo, o acesso 
+direto a sua base de dados para realizar buscas por estatítiscas.
 
 E é justamente nestes casos, onde o estilo do statim se comunicar pode auxiliar e facilitar o uso de um servidor para armazenar este tipo de informação, onde os objetivos do desenvolvimento pretende:
 
@@ -55,7 +61,7 @@ que você deseja, e eles sempre deverão conter:
 
 =over 4
 
-=item * Perído para agrupação dos dados
+=item * Período para agrupação dos dados
 
 Este é o tempo em segundos, no qual os dados serão agrupados em conjunto.
 
@@ -65,7 +71,7 @@ Como será o tipo de agregação, hoje há apenas dois métodos disponíveis. O 
 
 =item * Campos aleatórios.
 
-O nomes dos campos para identificar as possibilidade de filtros dentro da coleção de dados, e há dois tipos de parametros, um deles é o "enum" que você pode ter até 255 campos com este nome, e o outro é do tipo "count" que por enquanto é suportado apenas um tipo (e é obrigatório declarar) por coleção de dados. Para chegar neste conceito talvez podemos ter outro artigo sobre.
+O nomes dos campos para identificar as possibilidade de filtros dentro da coleção de dados, e há dois tipos de parâmetros, um deles é o "enum" que você pode ter até 255 campos com este nome, e o outro é do tipo "count" que por enquanto é suportado apenas um tipo (e é obrigatório declarar) por coleção de dados. Para chegar neste conceito talvez podemos ter outro artigo sobre.
 
 Mas, a questão principal aqui, é que com os campos do tipo "enum", você pode gerar uma diversidade de informações em uma mesma coleção de dados, e também pode manipular eles da melhor forma, imagine o cenário onde você quer registrar em intervalos de tempo dados sobre o arquivo de log da sua aplicação, e vamos supor que você queira especificar dois campos além do número de entradas de log que há, quer adicionar informações sobre o login do usuário, o ip, e qual módulo do aplicativo esta sendo utilizado, então podemos ter:
 
@@ -75,12 +81,12 @@ Mas, a questão principal aqui, é que com os campos do tipo "enum", você pode 
 		fields => {
 			login => enum,		# é um campo aleatório do tipo enum.
 			ip => enum,		    # o ip do usuário
-			modulo => enum,		# o módulo que o usuário esta acessando no aplicativo
+			modulo => enum,		# o módulo que o usuário esta utilizando no aplicativo
 			count => count		# o número de vezes
 		}
 	]
 
-Com estas informações, eu posso efetuar uma consulta na coleção de dados para saber quantas entradas tivemos em um periodo, ou eu posso selecionar quantas entradas tiveram neste periodo com um usuário especifico, ou com um ip especifico, ou em um módulo do aplicativo espcifico, ou mesmo juntar uma combinação entre eles. Veja que desta maneira, eu ganho uma facilidade de busca de informações muito mais eficiente e simples.
+Com estas informações, eu posso efetuar uma consulta na coleção de dados para saber quantas entradas tivemos em um periodo, ou eu posso selecionar quantas entradas tiveram neste periodo com um usuário especifico, ou com um ip especifico, ou em um módulo do aplicativo especifico, ou mesmo juntar uma combinação entre eles. Veja que desta maneira, eu ganho uma facilidade de busca de informações muito mais eficiente e simples.
 
 =begin pod:xhtml
 
@@ -115,13 +121,13 @@ Há três tipos de comandos em linha disponível dentro do Statim, que podem ser
 =head2 Enviar/Armazenar dados.
 
 Para enviar um dado para o servidor, há disponível por enquanto um método no qual
-você informa o nome do "collection", e os parametros.
+você informa o nome do "collection", e os parâmetros.
 
 	add collection ts:1234567890 foo:1 bar:jaz
 	OK
 
 O parametro "ts" diz qual o "tempo" do dado informado, e ele sempre é referenciado
-pelo nome "ts" (timestamp) e o valor é baseado no "epoch time", se este parametro
+pelo nome "ts" (timeseries) e o valor é baseado no "epoch time", se este parametro
 não for passado, ele assume que o o "tempo" é o do momento que o comando é enviado.
 
 =head2 Restaurar dados
@@ -231,7 +237,7 @@ Há dois aplicativos para facilitar a inicialização do uso do statim.
 
 =head2 statim-server
 
-É um aplicativo para facilitar a execução do servidor statim, para executar ele é necessário inidicar um servidor redis para utilizar como storage.
+É um aplicativo para facilitar a execução do servidor statim, para executar ele é necessário indicar um servidor redis para utilizar como storage.
 
 	./statim-server -h
 	Usage: ./statim-server [options] ...
@@ -283,7 +289,7 @@ Acredito pelo o que já abordado aqui, o código é auto explicado. :-)
 
 =head1 DESENVOLVIMENTO
 
-O desenvolvimento esta ainda em fase de construção de ideias, e por isto se você se interessou, peço para que você baixe ele, teste e envie suas críticas e sugestões para lista da São Paulo Perl Mongers.
+O desenvolvimento esta ainda em fase de construção de idéias, e por isto se você se interessou, peço para que você baixe ele, teste e envie suas críticas e sugestões para lista da São Paulo Perl Mongers.
 
 O repositório do projeto é L<http://github.com/maluco/Statim>.
 
