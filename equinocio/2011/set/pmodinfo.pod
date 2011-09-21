@@ -52,6 +52,14 @@ E caso você queira obter via "hash" a versão dos módulos instalados para te a
     		'Data::Printer' => 0.21,
 	};
 
+=head1 INSTALAÇÃO
+
+Para instalar, basta instalar via cpan ou cpanm o pacote L<App::pmodinfo>
+
+	cpanm App:::pmodinfo
+
+Veja mais: L<http://search.cpan.org/dist/App-pmodinfo/>
+
 =head1 DESENVOLVIMENTO
 
 L<http://www.github.com/maluco/App-pmodinfo>
