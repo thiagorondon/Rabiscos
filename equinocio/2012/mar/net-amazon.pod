@@ -1,0 +1,507 @@
+
+=encoding utf8
+
+=head1 NAME
+
+Receitas de soluções diversas para o AWS utilizando a linguagem Perl.
+
+=head1 Introdução
+
+Para muitos cenários necessitamos de uma infra-estrutura flexivel, 
+simples e segura para gerenciar. A solução proposta pela Amazon com
+o serviço de cloud oferece ferramentas muito importantes para novos
+negócios e existentes, no qual o custo da operação é baseado apenas
+no que você utiliza, oferecendo assim uma maneira rápida de escalar
+e economica.
+
+Amazon Web Service, ou AWS como é usualmente utilizado, é um serviço 
+disponibilizado pela Amazon, no qual oferece uma infra-estrutura 
+robusta e flexivel sobre demanda para suas necessidades, e caso você
+necessite utilizar este serviço para efetuar gerenciamento desta 
+infra-estrutura a linguagem Perl oferece ótimas soluções no quais
+iremos descrever aqui.
+
+O foco principal deste documento é mostrar exemplos e soluções de 
+problemas comum, ao redor dos serviços S3 (Simple Storage Service)
+e o EC2 (Elastic Compute Cloud).
+
+# Explicar melhor o que é o webservice AWS, e sua infra-estrutura.
+
+=head1 Credenciamento
+
+Para utilizar os serviços do AWS, primeiramente você deve ter uma
+conta, no qual é muito simples de ser criada, basta acessar o 
+website http://aws.amazon.com e clicar em "Sign Up Now".
+
+=over 4
+
+=item * AWS Account Credentials
+
+Este é o e-mail e a senha utilizada para acessar o portal do AWS e o console
+de gerenciamento via WEB, no qual tem poder para controlar todas as demais
+credenciais, por isto é muito importante manter esta senha muito bem segura
+e principalmente uma senha forte.
+
+=item * AWS Account Number
+
+Este é um número de 12 digitos para identificar os usuários no AWS, é uma 
+informação pública, no qual é utilizada principalmente para compartilhar
+recursos entre os usuários.
+
+=item * AccessKeyID e SecretAccessKey
+
+Toda requisição REST ou via API no qual é feita para executar os comandos
+dos serviços AWS é repassado as informações de identificação, AccessKeyID,
+no qual é um código que não pode ser alterado e esta associado a uma conta.
+
+Já o SecretAccessKey pode ser gerado novamente, caso exista esta informação
+seja comprometida por algum motivo no futuro.
+
+=item * X.509 Certificate
+
+Outra maneira de identificar seu acesso, utilizado para o acesso via SOAP.
+
+=item * SSH Keys
+
+Para acessar as instancias do EC2 é utilizado o par de chaves público/privado,
+no qual pode ser criado via o console do AWS ou você mesmo importar um par na
+criação de uma instancia.
+
+=back
+
+=head1 Receitas baseadas no EC2.
+
+EC2 permite que seja locado espaços virtuais dependendo da tua demanda, para
+que sejam executados sistemas operacionais que deseja, assim como aplicativos,
+e além do acesso a máquina virtual, você pode efetuar o gerenciamento através
+de uma API para facilitar mais a sua gestão e automação.
+
+=head2 Módulos Perl
+
+Iremos descrever aqui os módulos que iremos utilizar, um breve
+exemplo de utilizar eles abaixo.
+
+=head3 Net::Amazon::EC2
+
+Provavlmente a maioria dos exemplos deste documento, estarão baseado neste
+módulo, no qual oferece todo acesso a API do AWS de maneira simples, para
+instalar ele via cpanm, basta executar:
+
+  cpanm Net::Amazon::EC2 Data::Dumper
+
+Há diversas distribuições no qual já tem disponível estes pacotes também,
+basta procurar pelo nome deles no gerenciador de pacotes que você utiliza.
+
+Abaixo um script simples, no qual iremos basicamente carregar o módulo e 
+verificar se foi possível conectar ao serviço AWS.
+
+  #!/usr/bin/env perl
+
+  use Net::Amazon::EC2;
+  use Data::Dumper;
+
+  my $ec2 = Net::Amazon::EC2->new(
+    AWSAccessKeyId => 'xxxx',
+    SecretAccessKey => 'yyyy'
+  );
+
+Este script, será a base para as demais soluções encontradas durante este
+documento, ou seja, todo o código descrito abaixo iremos assumir que o 
+código acima esta sendo utilizado.
+
+=head2 Receitas baseadas em EC2.
+
+Iremos debater abaixo algumas soluções baseado no EC2, no qual para entender
+os exemplos, iremos listar alguns conceitos utilizados pelo AWS.
+
+=over 4
+
+=item * AMI (Amazon Machine Image)
+
+Você pode selecionar um modelo pré-configurado para iniciar uma instancia,
+buscar uma imagem na comunidade AMI no qual há diversas imagens disponível
+com sistemas operacionais e aplicativos pré-configurados, ou mesmo criar
+uma própria tua, como iremos ver logo em frente.
+
+=item * Tipo de instancia.
+
+Você deve verificar qual o "tamanho" da sua instancia, qual é a máquina
+virtual que você irá alocar, no qual algum deles são:
+
+=over
+
+=item - t1.micro
+
+Micro instância de 613 MB de memória, até 2 ECUs (para curtas intermitências periódicas), somente o armazenamento EBS, plataforma de 32 bits ou 64 bits
+
+=item - m1.small (default)
+
+Instância pequena (padrão) de 1,7 GB de memória, 1 Unidade de processamento EC2 (1 núcleo virtual com 1 Unidade de processamento EC2), 160 GB de armazenamento de instância local, plataforma de 32 bits.
+
+=item - m1.large
+
+Instância grande de 7,5 GB de memória, 4 Unidades de processamento EC2 (2 núcleos virtuais com 2 Unidades de processamento EC2 cada), 850 GB de armazenamento de instância local, plataforma de 64 bits.
+
+=item - m1.xlarge
+
+Instância Extragrande de 15 GB de memória, 8 Unidades de processamento EC2 (4 núcleos virtuais com 2 Unidades de processamento EC2 cada), 1.690 GB de armazenamento de instância local, plataforma de 64 bits.
+
+=item - outras
+
+Existem outras, veja mais em L<http://aws.amazon.com/pt/ec2/#instance>.
+
+=back
+
+=back
+
+=head3 Buscando regiões disponíveis.
+
+O AWS esta disponível em diversas regiões, e para saber quais regiões 
+estão disponíveis basta você buscar a descrição delas com o código:
+
+  my $zones = $ec2->describe_regions();
+  print Dumper(\$zones);
+
+=head3 Criando par de chaves SSH para acesso.
+
+Para acessar uma instancia criada no EC2, você deve ter um par de chaves
+configurado no gereanciador do AWS para que ele possa utilizar na hora
+de subir o novo ambiente para você, e para facilitar a criação há 
+disponível um método na API, no qual é:
+
+  my $result = $ec2->create_key_pair( KeyName => 'minha_chave' );
+  print Dumper(\$result);
+
+No resultado, você vai receber todas as informações referentes a chave,
+inclusive a chave privada que você irá utilizar para realizar o acesso
+no EC2.
+
+=head3 Criando e gerenciador grupos de segurança.
+
+Grupos de segurança são básicamente um perfil com regras de firewall, 
+no qual toda instancia EC2 esta associada e obrigatoriamente toda 
+instancia deve estar associada em uma.
+
+Para criar um grupo, é muito simples:
+
+  my $create_result = $ec2->create_security_group(
+    GroupName => "grupo_seguranca", 
+    GroupDescription => "Descricao do grupo de seguranca"
+  );
+
+Depios de criado, podemos criar uma regras para liberar o acesso a 
+determinadas portas, por exemplo autorizar o acesso na porta 80 (http)
+apenas para o IP 10.253.253.253.
+
+  my $authorize_result = $ec2->authorize_security_group_ingress(
+    GroupName => "grupo_seguranca", 
+    IpProtocol => 'tcp', 
+    # FromPort => '1043', 
+    ToPort => '80', 
+    CidrIp => '10.253.253.253/32');
+
+Em ambos os métodos, caso o retorno seja 1 é porque o método foi executado
+com sucesso.
+
+Para revogar uma autorização, basta utilizar o método security_group_ingress,
+como por exemplo:
+
+  my $revoke_result = $ec2->revoke_security_group_ingress(
+    GroupName => "grupo_seguranca", 
+    IpProtocol => 'tcp', 
+    ToPort => '7003', 
+    CidrIp => '10.253.253.253/32'
+  );
+
+  if ( $revoke_result == 1 ) {
+    print "Autorização encontrada e revogada";
+  }
+
+=head3 Como iniciar uma instancia baseada em uma imagem ?
+
+Para executar uma instancia no AWS, você deve ter em mãos um par de 
+chaves.
+
+  my $instance = $ec2->run_instances(
+    ImageId       => 'ami-xxxxxxx',
+    MinCount      => 1,
+    MaxCount      => 1,
+    InstanceType  => 'm1.small',
+    region        => 'sa-east-1',
+    SecurityGroup => 'grupo_seguranca',
+    KeyName       => 'minha_chave'
+  );
+
+  print Dumper(\$instance);
+
+Para paralizar uma instancia, basta utilizar o método stop_instances
+e colocar o ID da instancia que foi iniciada.
+
+  my $stop = $ec2->stop_instances( InstanceId => 'i-e000000x' );
+  print Dumper(\$stop);
+
+=head4 Tags para gerenciar um volume de instancias grandes.
+
+Quando você tem uma quantidade consideravel de instancias, e por algum
+motivo você quer adicionar tags para facilitar o gerenciamento, há
+métodos para isto.
+
+  # Adicionar uma tag
+  my $create_tag_result = $ec2->create_tags(
+    ResourceId  => $instance_id,
+    Tags        => {·
+        Name => 'hoge',
+        test_tag_key => 'test_tag_value',
+    },
+  );
+
+  if ($create_tag_result == 1 ) { 
+    print "Tag criada com sucesso."
+  }
+
+Agora você pode verificar na descrição da instancia, as tags que você
+acabou de adicionar no último exemplo.
+
+  my $running_instances = $ec2->describe_instances(
+    InstanceId => $instanceid,
+    );
+
+  my $target_instance;
+  # O método describe_instances sempre retorna uma array.
+  foreach my $instance (@{$running_instances}) {
+    my $instance_set = $instance->instances_set->[0];
+    if ($instance_set->instance_id eq $instance_id) {
+        $target_instance = $instance_set;
+        last;
+    }   
+  } 
+
+  # Buscando tags
+  foreach my $tag (@{$target_instance->tag_set}) {
+    if($tag->key eq 'Name' && $tag->value eq 'hoge') {
+      print "Tag Name com o valor hoge encontrado";
+    } elsif($tag->key eq 'test_tag_key' && $tag->value eq 'test_tag_value') {
+      print "Tag test_tag_key encontrado com o valor test_tag_value";
+    }
+  }
+
+Para apagar uma tag referente a uma instancia, bata invocar o método
+delete_tags.
+
+  my $delete_tags_result = $ec2->delete_tags(
+    ResourceId  => $instance_id,
+    'Tag.Key'   => ["Name","test_tag_key"],
+  );
+
+  if ($delete_tags_result == 1 ) {
+    print "Tag removida com sucesso.";
+  }
+
+=head3 Associar um ElasticIP com uma instancia.
+
+Dentro do AWS a sua instancia esta vinculado há um IP dinamico,
+no qual a toda inicialização você terá um diferente, e para que
+você tenha um IP fixo disponível, você irá utilizar o ElasticIP.
+
+Com o ElasticIP você pode requerer um IP para o seu uso, no qual
+você pode associar a uma instancia, ou mesmo alterar no momento
+que desejar para qual instancia ele estará vinculado.
+
+Para solicitar um IP para utilização, basta invocar:
+
+  my $ip = $ec2->allocate_address();
+
+Para associar uma instancia com um IP:
+
+  my $result = $ec2->associate_address(
+    InstanceId => $instanceid,
+    PublicIp => $ip
+  );
+
+Caso queira disassociar um IP de uma instancia, basta:
+
+  my $result = $ec2->disassociate_address( PublicIP => $ip );
+
+=head3 Acessando o log de console.
+
+Em alguns momentos, você irá querer obter o log do console da
+sua instancia, por exemplo quando você inicia uma instancia e
+você não consegue conectar nela e quer saber o que ocorreu,
+ou mesmo 
+
+  my $output = $ec2->get_console_output();
+
+=head3 Como criar uma imagem de uma instancia ?
+
+Há um método disponível para isto e simples para criar uma imagem
+de uma instancia sendo executada ou parada.
+
+  my $ami_id = $ec2->create_image(
+    InstanceId => $instanceid,
+    Name => 'nome_da_imagem',
+    Description => 'Descricao do nome_da_imagem',
+    NoReboot => 0
+  );
+
+A opção "NoReboot" é para não efetuar um 'shutdown' na instancia
+que esta rodando para criar a imagem, porém não há como garantir
+a integridade do sistema de arquivos caso esta opção seja 
+utilizada.
+
+=head3 Efetuar um clone
+
+Uma boa maneira de se efetuar um clone, e gerar uma imagem como
+já foi discutido anteriormente, e então rodar uma instancia 
+baseado em suas descrições e a imagem já criada.
+
+Um ponto interessante para se refletir, é em relação aos volumes
+(S3) associados a instancia que será utilizada como base para 
+copia, no qual iremos discutir posteriormente.
+
+=head3 Utilizando suas próprias chaves para o acesso via ssh.
+
+
+
+=head3 Buscando todas as instancias sendo executadas
+
+Para buscar todas as instancias que estão sendo executadas, 
+
+=head3 Monitoramento
+
+O principal papel do monitoramento nas instancias é saber quando
+você tem que escalar algo ou diminuir a tua infra-estrutura por
+exemplo.
+
+A Amazon oferece o CloudWatch, no qual você pode ativar e monitorar
+como esta o uso de cpu, disco e rede por exemplo. É permitido também
+a customização de algumas métricas.
+
+Para ativar o monitoramento:
+
+  my $object = $ec2->monitor_instances( InstanceId => $instanceid );
+  print Dumper(\$object);
+
+Para desativar:
+
+  my $object = $ec2->unmonitor_instances( InstanceId => $instanceid );
+  print Dumper(\$object);
+
+Para mais informações leia o documentação sobre o Amazon Cloud Watch.
+
+=head1 Receitas baseadas no S3
+
+Amazon S3 (Simple Storage Service) é um armazenador de dados 
+online baseado em web services via interfaces REST, SOAP ou BitTorrent,
+no qual tem como principal proposta armazenar objetos (arquivos)
+com fácil escalabilidade, alta disponibilidade, baixa latencia e
+com baixo custo.
+
+Diversos serviços de armazenamento hoje utilizam o S3, tais eles
+como Dropbox, Ubuntu, Zmanda, Tumblr, Formspring e diversos outros.
+
+Objetos são organizados em 'buckets', no qual é identificado por um
+código único, que podem ser criados, listados e recuperados
+via interface REST ou SOAP, e além disto pode ser realizado download
+via GET (http) ou pelo protocolo BitTorrent.
+
+=head1 Módulos Perl
+
+=head2 Net::Amazon::S3 e Net::Amazon::S3::Client
+
+O módulo L<Net::Amazon::S3> foi escrito logo que a API da Amazon
+foi lançada, mas depois de alguns anos e recentimente os mesmos
+autores autores resolveram escrever um novo módulo com uma 
+interface mais simples e com um novo design.
+
+Por isto neste documento, iremos utilizar o L<Net::Amazon::S3::Client>.
+
+O código abaixo será utilizado como base dos demais exemplos:
+
+  use Net::Amazon::S3;
+  use Net::Amazon::S3::Client;
+
+  my $s3 = Net::Amazon::S3->new(
+    aws_access_key_id     => $aws_access_key_id,
+    aws_secret_access_key => $aws_secret_access_key,
+  );
+
+  my $client = Net::Amazon::S3::Client->new( s3 => $s3 );
+
+Com este módulo, você também tem disponível um comando via linha de 
+comando chamado "s3cl", para mais informações leia a documentação
+L<http://search.cpan.org/~pfig/Net-Amazon-S3-0.56/bin/s3cl>.
+
+=head3 Criando um bucket
+
+Para criar um bucket, é muito simples:
+
+   my $bucket = $client->create_bucket(
+    name                => $bucket_name,
+    location_constraint => 'US',
+  );
+
+Depois de criar um bucket, você pode associar um objeto a ele, como
+por exemplo:
+
+  my $object = $bucket->object(
+        key              => 'diretorio/arquivo.txt',
+        expires          => '2015-02-03',
+        content_type     => 'text/plain',
+        acl_short        => 'public-read',
+  );
+
+Como neste exemplo, você esta esta adicionando um novo objeto com uma
+chave, uma data de expiração, o tipo do documento e que o controle de
+acesso é publico para leitura.
+
+Para adicionar um conteúdo basta utilizar o método put:
+
+  $object->put('Este é o valor do meu objeto');
+
+Ou, você pode utilizar o método put_filename, para adicionar o conteúdo
+de um arquivo:
+
+  $object->put_filename('README');
+
+Você pode ler mais sobre as opções para declarar um novo objeto
+no módulo L<Net::Amazon::S3::Client::Object>.
+
+=head3 Retornando a lista de buckets.
+
+Para listar todos os buckets referentes o cliente, basta utilizar 
+o código abaixo:
+
+  my @buckets = $client->buckets;
+  foreach my $bucket (@buckets) {
+    print $bucket->name . "\n";
+  }
+
+=head3 Hospedando sites estaticos com S3.
+
+Para acessar arquivos estaticos, basta utilizar os exemplos já
+escritos acima, e buscar qual a URL esta sendo utilizado, por
+exemplo :
+
+  http://$bucket_name.s3.amazonaws.com/diretorio/arquivo.txt
+
+=head3 Download de um arquivo via API
+
+É muito simples acessar via API também o arquivo, basta:
+
+  my $object = $bucket->object( key => 'diretorio/arquivo.txt' );
+  $object->get_filename('download_arquivo.txt');
+
+
+=head1 Considerações
+
+Este documento tem como objetivo ser uma visão geral de como
+trabalhar com os serviços da AWS e a linguagem Perl, dúvidas,
+sugestões ou críticas sobre os métodos utilizados aqui, favor
+encaminhar um e-mail para as listas de discussão ou IRC.
+
+=head1 Autor
+
+Thiago Rondon, <thiago@aware.com.br>, http://www.aware.com.br/
+
+=cut
+

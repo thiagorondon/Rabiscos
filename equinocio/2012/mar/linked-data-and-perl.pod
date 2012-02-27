@@ -1,0 +1,96 @@
+
+=encoding UTF-8
+
+=head1 NAME
+
+Uma visão geral sobre Linked Data e Perl.
+
+=head1 Introdução
+
+Nós já estamos discutindo sobre assuntos relacionados a dados abertos há algum tempo
+na comunidade Perl, e este documento tem como objetivo debater um pouco sobre a 
+especificação criada pela W3C sobre "dados ligados" e a linguagem Perl.
+
+=head1 Linked Data
+
+A web de documentos foi uma mudança e uma revolução enorme no mundo da informação,
+onde nós construimos a maior rede de informação já existente na história baseado
+em todo o conteúdo que tem na web, porém chegou em um determinado momento que 
+já era impossível gerenciar e manter que estes documentos fossem consumidos e 
+escritos apenas para os humanos, era necessário que estes documentos fossem 
+criados e mantidos de uma forma no qual os computadores pudessem interpretar, e
+aí de forma secundaria os humanos.
+
+RDF é uma das maneiras de realizar o "Linked Data".
+
+=head1  Perl
+
+(TODO)
+
+=head1 Projetos Perl para Linked Data.
+
+=head2 Infra-estrutura
+
+=head3 RDF::TrineShortcuts 
+
+=head4 toquet
+
+=head4 trapper
+
+=head4 trist
+
+=head3 RDF::Trine
+
+=head3 RDF::Helper
+
+Este módulo tem como principal proposta facilitar uma sintaxe simples para 
+disponibilizar para os desenvolvedores uma maneira mais eficiente de 
+realizar as suas tarefas com RDF de uma forma que seja bem familiar para
+programadores Perl.
+
+Este módulo é baseado no RDF::Trine...
+
+=head3 RDF::Query
+
+=head3 RDF::Query::Client
+
+=head3 Test::RDF
+
+=head3 Web::Scraper
+
+=head2 Publicação
+
+=head3 RDF::Endpoint
+
+=head3 RDF::LinkedData
+
+=head3 RDF::Acl
+
+=head3 CGI::Auth::FOAF_SSL
+
+=head2 Conversores
+
+=head3 RDF::RDFa::Parser e RDF::RDFa::Generator
+
+=head3 HTML::Microformats
+
+=head3 HTML::HTML5::Microdata::Parser
+
+=head3 XML::GRDDL
+
+=head3 XML::Atom::OWL
+
+=head3 RDF::vCard
+
+=head3 RDF::iCalendar
+
+=head3 RDF::KML::Exporter
+
+=head3 XRD::Parser
+
+=head1 Autor
+
+Thiago Rondon, <thiago@aware.com.br>, http://www.aware.com.br/
+
+=cut
+

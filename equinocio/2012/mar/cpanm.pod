@@ -1,0 +1,105 @@
+
+=encoding UTF-8
+
+=head1 NAME
+
+Motivos, Instalação e como utilizar o cpanm ?
+
+=head1 Introdução
+
+Tatsunhiko Miyagawa é um daqueles caras que sempre esta
+criando algo muito útil e prático para comunidade, e ele
+escreveu este excelente aplicativo no qual simplifica muito
+o processo de instalação de módulos Perl.
+
+Este aplicativo tem como objetivo buscar, descompactar, 
+construir e instalar módulos Perl baseado no CPAN no teu 
+sistema.
+
+Além da simplicidade, não há dependencias para a instalação
+dele e você precisa de apenas 10MB de memória RAM para 
+realizar as tarefas que ele se propõe.
+
+=head2 Como instalar
+
+O cpanm pode ser executado com o interpretador 5.8 da 
+linguagem ou superior, além disto você deve ter o "tar"
+e o "make" instalado no teu sistema.
+
+=head3 Pacotes
+
+Há diversas maneiras de se instalar o cpanm, existem pacotes
+para deb, rpm, freebsd e outros sistemas de pacotes, caso 
+você queira verificar se na tua atual distribuição existe
+o pacote, basta utilizar o gerenciador de pacotes e buscar
+por 'cpanminus' e verificar se há o pacote disponível.
+
+=head3 Linha de comando
+
+Uma maneira simples de instalar via linha de comando o cpanm,
+é digitando o comando:
+
+  curl -L http://cpanmin.us | perl - --sudo App::cpanminus
+
+Caso, você queira instalar o cpanm apenas no diretorio do 
+teu usuário (perlbrew, local::lib) basta executar a linha
+abaixo:
+
+   curl -L http://cpanmin.us | perl - App::cpanminus
+
+Se você estiver perlbrew, basta executar:
+
+  perlbrew install-cpanm
+
+# zero-conf
+
+=head1 Comandos
+
+=head2 -i
+
+Instalar um novo pacote, a opcão "-i" é apenas para compatibilidade com o cpan e cpanplus, 
+pois caso você não deixe explicito este comando, ele é o padrão, ou seja os dois comandos 
+abaixo tem o mesmo resultado.
+
+  cpanm Meu::Pacote
+  cpanm -i Meu::Pacote
+
+=head2 --self-upgrade
+
+Atualizar o próprio aplicativo, o que internamente é um simples alias para:
+
+  cpanm App::cpanminus
+
+=head2 --info
+
+Informação de como este pacote é distribuido pelo CPAN.
+
+  cpanm --info Meu::Pacote
+
+=head2 --installdeps
+
+Muitas vezes, você irá se deparar com um aplicativo ou módulo com diversas dependencias,
+para instalar todas elas, basta executar o comando abaixo:
+
+  cpanm --installdeps .
+
+=head2 --look
+
+Para realizar a construção manual do pacote que deseja instalar, esta opção é muito útil
+para verificar por exemplo o que esta ocorrendo de errado em uma instalação de um pacote.
+
+  cpanm --look Meu::Pacote
+
+=head2 --help
+
+Veja mais opções na descrição do comando L<cpanm> ou utilize
+a opção de ajuda.
+
+  cpanm --help
+
+=head1 Autor
+
+Thiago Rondon, <thiago@aware.com.br>, http://www.aware.com.br/
+
+=cut
+
